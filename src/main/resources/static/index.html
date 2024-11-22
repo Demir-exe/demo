@@ -3,146 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mesaj Gönder</title>
+    <title>Message Panel</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7fc;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
-
-        .container {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            width: 400px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #333;
+        .panel {
+            background-color: #f0f0f0;
+            padding: 20px;
             margin-bottom: 20px;
+            border-radius: 10px;
         }
-
-        label {
-            font-size: 16px;
-            color: #555;
-            display: block;
-            margin-bottom: 8px;
+        .panel h2 {
+            margin: 0 0 10px;
         }
-
-        select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 16px;
-            background-color: #fafafa;
+        .panel p {
+            font-size: 18px;
+            margin: 10px 0;
         }
-
-        textarea {
-            height: 120px;
+        .update-form {
+            margin-top: 10px;
         }
-
-        button {
+        .update-form input {
+            padding: 10px;
+            margin-right: 10px;
+            width: 300px;
+        }
+        .update-form button {
+            padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
-            font-size: 16px;
-            padding: 15px 30px;
             border: none;
-            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #response {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        #response.success {
-            color: green;
-        }
-
-        #response.error {
-            color: red;
-        }
-
-        .select-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .select-container select {
-            width: auto;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>Mesaj Gönder</h1>
-
-    <div class="select-container">
-        <label for="messageId">Mesaj ID:</label>
-        <select id="messageId">
-            <option value="1">1</option>
-            <option value="2">2</option>
-        </select>
+<div class="panel" id="panel1">
+    <h2>Panel 1</h2>
+    <p id="message1">Yükleniyor...</p>
+    <div class="update-form">
+        <input type="text" id="updateMessage1" placeholder="Yeni mesajı girin">
+        <button onclick="updateMessage(1)">Mesajı Güncelle</button>
     </div>
+</div>
 
-    <textarea id="message" placeholder="Mesajınızı yazın..."></textarea>
-
-    <button onclick="sendMessage()">Gönder</button>
-
-    <div id="response"></div>
+<div class="panel" id="panel2">
+    <h2>Panel 2</h2>
+    <p id="message2">Yükleniyor...</p>
+    <div class="update-form">
+        <input type="text" id="updateMessage2" placeholder="Yeni mesajı girin">
+        <button onclick="updateMessage(2)">Mesajı Güncelle</button>
+    </div>
 </div>
 
 <script>
-    function sendMessage() {
-        const message = document.getElementById("message").value;
-        const id = document.getElementById("messageId").value;
+    // Veriyi Firebase'den almak için API'ye GET isteği gönderme
+    function loadMessages() {
+        fetch('http://localhost:8080/api/message/1')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("message1").innerText = data;
+            });
 
-        // Mesaj ve ID kontrolü
-        if (!message || !id) {
-            document.getElementById("response").innerHTML = "Mesaj ve ID boş olamaz!";
-            document.getElementById("response").classList.add('error');
-            return;
-        }
+        fetch('http://localhost:8080/api/message/2')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("message2").innerText = data;
+            });
+    }
 
-        // API'ye veri gönderme
-        fetch('http://localhost:8080/api/message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `message=${encodeURIComponent(message)}&id=${encodeURIComponent(id)}`
+    // Firebase'deki mesajı güncellemek için API'ye POST isteği gönderme
+    function updateMessage(panelId) {
+        const message = document.getElementById(`updateMessage${panelId}`).value;
+        fetch(`http://localhost:8080/api/message/${panelId}?message=${message}`, {
+            method: 'POST'
         })
         .then(response => response.text())
         .then(data => {
-            document.getElementById("response").innerHTML = data;
-            document.getElementById("response").classList.add('success');
-        })
-        .catch(error => {
-            document.getElementById("response").innerHTML = "Bir hata oluştu!";
-            document.getElementById("response").classList.add('error');
-            console.error('Error:', error);
+            alert(data);  // Güncellenmiş mesajın başarıyla gönderildiğini bildiren mesaj
+            loadMessages();  // Mesajlar yeniden yüklenir
         });
     }
-</script>
 
+    // Sayfa yüklendiğinde mesajları yükle
+    window.onload = loadMessages;
+</script>
 </body>
 </html>
