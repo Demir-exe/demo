@@ -14,12 +14,19 @@ public class MessageController {
     @Autowired
     private MesajService mesajService;
 
-    // Formdan gelen message parametresini alacak olan POST metodu
+    // Formdan gelen message ve id parametrelerini alacak olan POST metodu
     @PostMapping("/message")
-    public String mesaj(@RequestParam("message") String message) throws ExecutionException, InterruptedException {
-        Mesaj mesaj = new Mesaj();
-        mesaj.setMessage(message);  // Formdan alınan mesajı Mesaj nesnesine set et
-        return mesajService.saveMessage(mesaj);  // Mesajı Firebase'e kaydet
-    }
-}
+    public String mesaj(@RequestParam("message") String message, @RequestParam("id") String id) throws ExecutionException, InterruptedException {
+        if (message == null || message.isEmpty() || id == null || id.isEmpty()) {
+            return "Mesaj veya ID eksik!";
+        }
 
+        Mesaj mesaj = new Mesaj();
+        mesaj.setMessage(message);  // Mesajı al
+        mesaj.setId(id);            // ID'yi al
+
+        // Mesajı Firebase'e kaydet ve id parametresine göre doğru referansı güncelle
+        return mesajService.saveMessage(mesaj, id);
+    }
+
+}

@@ -1,36 +1,27 @@
-// Formu seç
-const form = document.getElementById('messageForm');
-const responseElement = document.getElementById('response');
+function sendMessage() {
+    const message = document.getElementById("message").value;
+    const id = document.getElementById("messageId").value;
 
-// Form gönderme işlemi
-form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Sayfanın yeniden yüklenmesini engelle
-
-    // Formdan mesajı al
-    const message = document.getElementById('message').value;
-
-    try {
-        // Backend'e POST isteği gönder
-        const response = await fetch('/api/message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `message=${encodeURIComponent(message)}`, // Veriyi gönder
-        });
-
-        // Backend'den gelen cevabı al
-        const result = await response.text();
-
-        // Başarılı mesajı göster
-        responseElement.innerHTML = `Sunucu cevabı: ${result}`;
-
-        responseElement.className = "mt-4 alert alert-success";
-        responseElement.classList.remove("d-none");
-    } catch (error) {
-        console.error('Mesaj gönderme sırasında hata oluştu:', error);
-        responseElement.textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
-        responseElement.className = "mt-4 alert alert-danger";
-        responseElement.classList.remove("d-none");
+    // Mesaj ve ID kontrolü
+    if (!message || !id) {
+        document.getElementById("response").innerHTML = "Mesaj ve ID boş olamaz!";
+        return;
     }
-});
+
+    // API'ye veri gönderme
+    fetch('http://localhost:8080/api/message', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `message=${encodeURIComponent(message)}&id=${encodeURIComponent(id)}`
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("response").innerHTML = data;
+    })
+    .catch(error => {
+        document.getElementById("response").innerHTML = "Bir hata oluştu!";
+        console.error('Error:', error);
+    });
+}
