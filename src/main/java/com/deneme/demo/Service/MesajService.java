@@ -20,7 +20,7 @@ public class MesajService {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         // Mesajı "message" path'ine kaydediyoruz
-        databaseReference.child(MESSAGE_PATH).setValueAsync(mesaj);
+        databaseReference.child("message").child("1").setValueAsync(mesaj.getMessage());
 
         return "Mesaj başarıyla kaydedildi <br> Mesaj : "+mesaj.getMessage();
     }
