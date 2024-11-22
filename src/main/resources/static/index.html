@@ -3,93 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Message Panel</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .panel {
-            background-color: #f0f0f0;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-        }
-        .panel h2 {
-            margin: 0 0 10px;
-        }
-        .panel p {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .update-form {
-            margin-top: 10px;
-        }
-        .update-form input {
-            padding: 10px;
-            margin-right: 10px;
-            width: 300px;
-        }
-        .update-form button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    </style>
+    <title>Profesyonel Mesaj Panosu</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<div class="panel" id="panel1">
-    <h2>Panel 1</h2>
-    <p id="message1">Yükleniyor...</p>
-    <div class="update-form">
-        <input type="text" id="updateMessage1" placeholder="Yeni mesajı girin">
-        <button onclick="updateMessage(1)">Mesajı Güncelle</button>
+<div class="main-container">
+    <div class="panel-container">
+        <!-- Panel 1 -->
+        <div class="panel" id="panel1">
+            <div class="advertising-board" id="message1">
+                <span class="icon">📢</span>
+                <p id="message1-text">Yükleniyor...</p>
+            </div>
+            <div class="message-input">
+                <textarea id="updateMessage1" placeholder="Yeni mesaj yazın..."></textarea>
+                <button class="update-btn" onclick="updateMessage(1)">Mesajı Güncelle</button>
+            </div>
+        </div>
+
+        <!-- Panel 2 -->
+        <div class="panel" id="panel2">
+            <div class="advertising-board" id="message2">
+                <span class="icon">📢</span>
+                <p id="message2-text">Yükleniyor...</p>
+            </div>
+            <div class="message-input">
+                <textarea id="updateMessage2" placeholder="Yeni mesaj yazın..."></textarea>
+                <button class="update-btn" onclick="updateMessage(2)">Mesajı Güncelle</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="panel" id="panel2">
-    <h2>Panel 2</h2>
-    <p id="message2">Yükleniyor...</p>
-    <div class="update-form">
-        <input type="text" id="updateMessage2" placeholder="Yeni mesajı girin">
-        <button onclick="updateMessage(2)">Mesajı Güncelle</button>
-    </div>
-</div>
-
-<script>
-    // Veriyi Firebase'den almak için API'ye GET isteği gönderme
-    function loadMessages() {
-        fetch('http://localhost:8080/api/message/1')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("message1").innerText = data;
-            });
-
-        fetch('http://localhost:8080/api/message/2')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("message2").innerText = data;
-            });
-    }
-
-    // Firebase'deki mesajı güncellemek için API'ye POST isteği gönderme
-    function updateMessage(panelId) {
-        const message = document.getElementById(`updateMessage${panelId}`).value;
-        fetch(`http://localhost:8080/api/message/${panelId}?message=${message}`, {
-            method: 'POST'
-        })
-        .then(response => response.text())
-        .then(data => {
-            alert(data);  // Güncellenmiş mesajın başarıyla gönderildiğini bildiren mesaj
-            loadMessages();  // Mesajlar yeniden yüklenir
-        });
-    }
-
-    // Sayfa yüklendiğinde mesajları yükle
-    window.onload = loadMessages;
-</script>
+<!-- app.js dosyasını buraya dahil et -->
+<script src="/app.js"></script>
 </body>
 </html>
